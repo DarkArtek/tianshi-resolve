@@ -18,7 +18,8 @@ export const t = reactive({
     sendBtn: 'SEND',
     resonating: 'Resonating...',
     defaultTianshiReply: 'The ancient strings hum. What knowledge do you seek from the ruins?',
-    listenOn: 'Stream & Download'
+    listenOn: 'Stream & Download',
+    previewEndedText: 'Preview limit reached. Discover the full song on your favorite store!'
   },
   it: {
     subtitle: 'ARCHIVI CELESTI',
@@ -29,6 +30,7 @@ export const t = reactive({
     sendBtn: 'INVIA',
     resonating: 'In risonanza...',
     defaultTianshiReply: 'Le antiche corde vibrano. Quale conoscenza cerchi tra queste rovine?',
-    listenOn: 'Ascolta e Scarica'
+    listenOn: 'Ascolta e Scarica',
+    previewEndedText: 'Anteprima conclusa. Scopri il brano completo sui tuoi store preferiti!'
   }
 })
