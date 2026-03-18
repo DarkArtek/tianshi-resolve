@@ -11,19 +11,28 @@
         <picture class="cover-picture">
           <source srcset="/optimized/cover.avif" type="image/avif">
           <source srcset="/optimized/cover.webp" type="image/webp">
-          <img src="/raw-images/cover.png" alt="The Tianshi's Resolve Cover Art" class="cover-image">
+          <img src="/raw-images/cover.jpg" alt="The Tianshi's Resolve Cover Art" class="cover-image">
         </picture>
 
         <div class="audio-controls-container">
           <audio 
+            ref="audioRef"
             controls 
             controlsList="nodownload" 
             oncontextmenu="return false;"
             class="custom-audio"
+            @timeupdate="handleTimeUpdate"
+            @play="handlePlay"
           >
-            <source src="https://tianshi-resolve.b-cdn.net/tianshi_resolve.mp3" type="audio/mpeg">
+            <source src="https://tianshi-resolve.b-cdn.net/tianshis-resolve.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
           </audio>
+          
+          <transition name="fade">
+            <div v-if="previewEnded" class="preview-notice">
+              <p>{{ t[currentLang].previewEndedText }}</p>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -31,8 +40,63 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import MagicDust from './MagicDust.vue'
 import { currentLang, t } from '../locales'
+
+const audioRef = ref<HTMLAudioElement | null>(null)
+const previewEnded = ref(false)
+const hasTrackedPlay = ref(false)
+const hasTrackedPreviewEnd = ref(false)
+const PREVIEW_LIMIT = 30 
+
+// Helper per inviare dati in modo sicuro a GTM
+const pushToDataLayer = (payload: any) => {
+  if (typeof window !== 'undefined' && (window as any).dataLayer) {
+    (window as any).dataLayer.push(payload)
+  }
+}
+
+const handlePlay = () => {
+  // previewEnded.value = false // DA SCOMMENTARE INSIEME AL BLOCCO
+  
+  // Tracciamo il play solo la prima volta
+  if (!hasTrackedPlay.value) {
+    pushToDataLayer({
+      event: 'audio_interaction',
+      audio: {
+        action: 'play',
+        title: 'The Tianshi\'s Resolve'
+      }
+    })
+    hasTrackedPlay.value = true
+  }
+}
+
+const handleTimeUpdate = () => {
+  if (audioRef.value && audioRef.value.currentTime >= PREVIEW_LIMIT) {
+    
+    /* =========================================================
+       BLOCCO 30 SECONDI - DA SCOMMENTARE IL GIORNO DELLA RELEASE
+       =========================================================
+    audioRef.value.pause()
+    audioRef.value.currentTime = PREVIEW_LIMIT
+    previewEnded.value = true
+    ========================================================= */
+    
+    // Tracciamo il raggiungimento dei 30s (Lasciato attivo per raccogliere statistiche fin da subito!)
+    if (!hasTrackedPreviewEnd.value) {
+      pushToDataLayer({
+        event: 'audio_interaction',
+        audio: {
+          action: 'reached_30s',
+          title: 'The Tianshi\'s Resolve'
+        }
+      })
+      hasTrackedPreviewEnd.value = true
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -102,6 +166,7 @@ h1 {
   background-color: var(--bg-color);
   padding: 1rem;
   border-top: 1px solid var(--border-muted);
+  position: relative;
 }
 
 .custom-audio {
@@ -113,6 +178,29 @@ h1 {
 
 .custom-audio:focus {
   outline: none;
+}
+
+.preview-notice {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: rgba(56, 229, 157, 0.1);
+  border: 1px solid var(--accent-jade);
+  border-radius: 6px;
+  color: var(--accent-jade);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-shadow: 0 0 5px var(--accent-jade-glow);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 @media (max-width: 900px) {
