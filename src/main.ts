@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import router from './router'
 import { loadGTM, loadNoScript } from '@ahdcreative/gtm-core'
 
 const app = createApp(App)
@@ -31,5 +32,5 @@ localStorage.setItem = function(key, value) {
     initTracking()
   }
 }
-
+app.use(router)
 app.mount('#app')
