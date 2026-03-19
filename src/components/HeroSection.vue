@@ -9,9 +9,9 @@
       
       <div class="player-wrapper">
         <picture class="cover-picture">
-          <source srcset="/optimized/cover.avif" type="image/avif">
-          <source srcset="/optimized/cover.webp" type="image/webp">
-          <img src="/raw-images/cover.jpg" alt="The Tianshi's Resolve Cover Art" class="cover-image">
+          <source :srcset="'/optimized/cover.avif'" type="image/avif">
+          <source :srcset="'/optimized/cover.webp'" type="image/webp">
+          <img :src="'/raw-images/cover.jpg'" alt="The Tianshi's Resolve Cover Art" class="cover-image">
         </picture>
 
         <div class="audio-controls-container">
@@ -24,7 +24,7 @@
             @timeupdate="handleTimeUpdate"
             @play="handlePlay"
           >
-            <source src="https://tianshi-resolve.b-cdn.net/tianshis-resolve.mp3" type="audio/mpeg">
+            <source src="https://tianshi-resolve.b-cdn.net/tianshi_resolve.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
           </audio>
           
@@ -50,7 +50,6 @@ const hasTrackedPlay = ref(false)
 const hasTrackedPreviewEnd = ref(false)
 const PREVIEW_LIMIT = 30 
 
-// Helper per inviare dati in modo sicuro a GTM
 const pushToDataLayer = (payload: any) => {
   if (typeof window !== 'undefined' && (window as any).dataLayer) {
     (window as any).dataLayer.push(payload)
@@ -60,7 +59,6 @@ const pushToDataLayer = (payload: any) => {
 const handlePlay = () => {
   // previewEnded.value = false // DA SCOMMENTARE INSIEME AL BLOCCO
   
-  // Tracciamo il play solo la prima volta
   if (!hasTrackedPlay.value) {
     pushToDataLayer({
       event: 'audio_interaction',
@@ -84,7 +82,6 @@ const handleTimeUpdate = () => {
     previewEnded.value = true
     ========================================================= */
     
-    // Tracciamo il raggiungimento dei 30s (Lasciato attivo per raccogliere statistiche fin da subito!)
     if (!hasTrackedPreviewEnd.value) {
       pushToDataLayer({
         event: 'audio_interaction',

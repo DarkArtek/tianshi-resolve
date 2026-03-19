@@ -1,18 +1,11 @@
+/* src/style.css */
+
 :root {
-  --bg-color: #0a0a0c; /* Dark background color */
-  --text-main: #e2e2e2; /* Main text color. Easy to read */
-  --text-muted: #888888; /* Muted text color. For less important information */
-
-  /* Accent colors for highlights and interactive elements (Ancient Gold for energetic elements and peaks) */
-  --accent-gold: #d4af37; /* Ancient Gold */
-  --acent-gold-glow: rgba(212, 175, 55, 0.4); /* Glow effect for Ancient Gold */
-
-  /* Accent colors for highlights and interactive elements (Xiranite Jade for story and structure) */
-  --accent-jade: #38E59D; /* Xiranite Jade */
-  --accent-jade-glow: rgba(45, 111, 94, 0.3); /* Glow effect for Xiranite Jade */
-
-  /* Scrollbar colors and muted colors */
-  --border-muted: rgba(45, 111, 94, 0.2); /* Muted border color for scrollbars and dividers */
+  --bg-color: #050505;
+  --text-muted: #a0a0a0;
+  --accent-jade: #38e59d;
+  --accent-jade-glow: rgba(56, 229, 157, 0.5);
+  --border-muted: #333;
 }
 
 * {
@@ -23,16 +16,45 @@
 
 body {
   background-color: var(--bg-color);
-  color: var(--text-main);
-  font-family: 'Rajdhani', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  line-height: 1.6;
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 
-h1, h2, h3 {
-  font-family: 'Cinzel', serif;
+/* =========================================================
+   CUSTOM COOKIE BANNER OVERRIDES - THE TIANSHI'S RESOLVE
+   ========================================================= */
+
+/* Sovrascrive il contenitore principale */
+.cookie-banner {
+  background-color: rgba(10, 10, 10, 0.95) !important;
+  border-top: 1px solid var(--accent-jade) !important;
+  box-shadow: 0 -5px 20px rgba(45, 111, 94, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
+  color: #e0e0e0 !important;
 }
 
-.chinese-text {
-  font-family: 'Noto Sans SC', sans-serif;
+/* Modifica il testo del contenuto */
+.cookie-banner__content {
+  color: var(--text-muted) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Stile per i bottoni (fonde il tuo layout con i colori del sito) */
+.cookie-banner__button {
+  background-color: rgba(56, 229, 157, 0.1) !important;
+  color: var(--accent-jade) !important;
+  border: 1px solid var(--accent-jade) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  transition: all 0.3s ease !important;
+  opacity: 1 !important; /* Rimuove l'opacity di default all'hover del pacchetto */
+}
+
+/* Effetto glow al passaggio del mouse sui bottoni */
+.cookie-banner__button:hover {
+  background-color: var(--accent-jade) !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px var(--accent-jade-glow) !important;
 }
