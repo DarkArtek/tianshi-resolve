@@ -43,8 +43,6 @@ const chatMessages = ref<ChatMessage[]>([
   { role: 'tianshi', text: t[currentLang.value].defaultTianshiReply }
 ])
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY
-
 const askGemini = async () => {
   const text = userInput.value.trim()
   if (!text) return
@@ -63,14 +61,13 @@ const askGemini = async () => {
   })
 
   try {
-    const prompt = `Sei Zhuang Fangyi, una Tianshi e studiosa delle Arti Antiche. Stai rispondendo a un viandante che ascolta la tua canzone "The Tianshi's Resolve". Rispondi in massimo 3 frasi, usando un tono epico, misterioso e poetico. La domanda è: "${text}"`
+    const prompt = `Sei Zhuang Fangyi, una Tianshi, studiosa delle Arti Antiche e vice-re di Wuling. Stai rispondendo a un viandante che ascolta la tua canzone "The Tianshi's Resolve". Rispondi in massimo 3 frasi, usando un tono epico, misterioso e poetico. La domanda è: "${text}"`
     
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${API_KEY}`, {
+    // Chiamata sicura alla nostra API serverless su Cloudflare
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+      body: JSON.stringify({ prompt })
     })
 
     if (!response.ok) throw new Error('Network response was not ok')
@@ -80,7 +77,7 @@ const askGemini = async () => {
     
     chatMessages.value.push({ role: 'tianshi', text: replyText })
   } catch (error) {
-    console.error('Error calling Gemini:', error)
+    console.error('Error calling Server API:', error)
     chatMessages.value.push({ role: 'tianshi', text: '[System Error] Connection to the Ancient Arts severed.' })
   } finally {
     isLoading.value = false
@@ -178,7 +175,6 @@ button:hover:not(:disabled) {
   50% { opacity: 0.5; }
 }
 
-/* Ottimizzazione Mobile */
 @media (max-width: 900px) {
   h2 {
     font-size: 1.5rem;
@@ -192,7 +188,7 @@ button:hover:not(:disabled) {
     flex-wrap: wrap; 
   }
   input {
-    font-size: 16px; /* 16px è il minimo per evitare l'auto-zoom su iOS */
+    font-size: 16px; 
     width: 100%;
   }
 }
