@@ -2,9 +2,6 @@ name = "tianshi-resolve"
 compatibility_date = "2026-03-18"
 pages_build_output_dir = "dist"
 
-[vars]
-VITE_GEMINI_API_KEY = ""
-
 [[kv_namespaces]]
 binding = "TIANSHI_KV"
 id = "b38f3662e9ca492284cab87677714b60"
