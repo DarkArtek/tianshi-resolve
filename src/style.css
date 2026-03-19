@@ -1,31 +1,65 @@
-/* src/style.css */
-
+/* =========================================================
+   GLOBAL VARIABLES - THE TIANSHI'S RESOLVE
+   ========================================================= */
 :root {
   --bg-color: #050505;
+  --text-main: #ffffff;
   --text-muted: #a0a0a0;
+  
+  /* Colori Giada */
   --accent-jade: #38e59d;
   --accent-jade-glow: rgba(56, 229, 157, 0.5);
-  --border-muted: #333;
+  
+  /* Colori Oro (Terminale e Testo) */
+  --accent-gold: #d4af37;
+  --accent-gold-glow: rgba(212, 175, 55, 0.5);
+  
+  --border-muted: #333333;
 }
 
-* {
+/* =========================================================
+   RESET & BASE STYLES
+   ========================================================= */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--bg-color);
-  color: #fff;
+  color: var(--text-main);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar - Xiranite Theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-jade);
 }
 
 /* =========================================================
-   CUSTOM COOKIE BANNER OVERRIDES - THE TIANSHI'S RESOLVE
+   CUSTOM COOKIE BANNER OVERRIDES
    ========================================================= */
-
-/* Sovrascrive il contenitore principale */
 .cookie-banner {
   background-color: rgba(10, 10, 10, 0.95) !important;
   border-top: 1px solid var(--accent-jade) !important;
@@ -34,14 +68,12 @@ body {
   color: #e0e0e0 !important;
 }
 
-/* Modifica il testo del contenuto */
 .cookie-banner__content {
   color: var(--text-muted) !important;
   font-size: 0.95rem !important;
   line-height: 1.5 !important;
 }
 
-/* Stile per i bottoni (fonde il tuo layout con i colori del sito) */
 .cookie-banner__button {
   background-color: rgba(56, 229, 157, 0.1) !important;
   color: var(--accent-jade) !important;
@@ -49,10 +81,9 @@ body {
   text-transform: uppercase !important;
   letter-spacing: 1.5px !important;
   transition: all 0.3s ease !important;
-  opacity: 1 !important; /* Rimuove l'opacity di default all'hover del pacchetto */
+  opacity: 1 !important; /* Rimuove l'opacity di default all'hover */
 }
 
-/* Effetto glow al passaggio del mouse sui bottoni */
 .cookie-banner__button:hover {
   background-color: var(--accent-jade) !important;
   color: #000 !important;
