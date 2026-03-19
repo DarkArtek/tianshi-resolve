@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 import { pushToDataLayer } from '@ahdcreative/gtm-core'
 import { currentLang, t } from '../locales'
 
@@ -42,6 +42,13 @@ const terminalOutput = ref<HTMLElement | null>(null)
 const chatMessages = ref<ChatMessage[]>([
   { role: 'tianshi', text: t[currentLang.value].defaultTianshiReply }
 ])
+
+// Reattività per la lingua del saluto iniziale
+watch(currentLang, (newLang) => {
+  if (chatMessages.value.length === 1) {
+    chatMessages.value[0].text = t[newLang].defaultTianshiReply
+  }
+})
 
 const askGemini = async () => {
   const text = userInput.value.trim()
@@ -61,24 +68,34 @@ const askGemini = async () => {
   })
 
   try {
-    const prompt = `Sei Zhuang Fangyi, una Tianshi, studiosa delle Arti Antiche e vice-re di Wuling. Stai rispondendo a un viandante che ascolta la tua canzone "The Tianshi's Resolve". Rispondi in massimo 3 frasi, usando un tono epico, misterioso e poetico. La domanda è: "${text}"`
+    // Prompt corretto: Viceroy of Wuling!
+    const systemInstruction = currentLang.value === 'en'
+      ? `You are Zhuang Fangyi, a Tianshi, scholar of the Ancient Arts, and viceroy of Wuling. You are replying to a traveler listening to your song "The Tianshi's Resolve". Reply in max 3 sentences, using an epic, mysterious, and poetic tone. The question is: "${text}"`
+      : `Sei Zhuang Fangyi, una Tianshi, studiosa delle Arti Antiche e vice-re di Wuling. Stai rispondendo a un viandante che ascolta la tua canzone "The Tianshi's Resolve". Rispondi in massimo 3 frasi, usando un tono epico, misterioso e poetico. La domanda è: "${text}"`
     
     // Chiamata sicura alla nostra API serverless su Cloudflare
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt: systemInstruction })
     })
 
     if (!response.ok) throw new Error('Network response was not ok')
 
     const data = await response.json()
-    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Le Arti sono silenziose oggi.'
+    
+    // Fallback bilingue in caso di risposta vuota da Gemini
+    const fallbackMsg = currentLang.value === 'en' ? 'The Arts are silent today.' : 'Le Arti sono silenziose oggi.'
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || fallbackMsg
     
     chatMessages.value.push({ role: 'tianshi', text: replyText })
   } catch (error) {
     console.error('Error calling Server API:', error)
-    chatMessages.value.push({ role: 'tianshi', text: '[System Error] Connection to the Ancient Arts severed.' })
+    // Errore bilingue per simulare la rottura del terminale
+    const errorMsg = currentLang.value === 'en' 
+      ? '[System Error] Connection to the Ancient Arts severed.' 
+      : '[Errore di Sistema] Connessione con le Arti Antiche interrotta.'
+    chatMessages.value.push({ role: 'tianshi', text: errorMsg })
   } finally {
     isLoading.value = false
     scrollToBottom()
