@@ -12,8 +12,20 @@ interface AppSettings {
         appleMusic: string;
         youtube: string;
         deezer: string;
+        amazonMusic: string;
     }
 };
+
+const DEFAULT_SETTINGS: AppSettings = {
+    previewLimitActive: false,
+    storeLinks: {
+        spotify: 'https://spotify.com/...',
+        appleMusic: 'https://music.apple.com/...',
+        youtube: 'https://youtube.com/...',
+        deezer: 'https://deezer.com/...',
+        amazonMusic: 'https://music.amazon.com/...'
+    }
+}
 
 // GET: il frontend di Vue chiama questa funzione per leggere le impostazioni
 export const onRequestGet = async (context: { env: Env }) => {
