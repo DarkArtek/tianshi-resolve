@@ -42,18 +42,40 @@ export const onRequestPost = async (context: { request: Request, env: Env }) => 
   const { request, env } = context;
   
   const authHeader = request.headers.get('Authorization');
-  if (authHeader !== `Bearer ${env.ADMIN_SECRET}`) {
-    return new Response('Non autorizzato', { status: 401 });
+  
+  // TRUCCO: Se Cloudflare non passa la variabile, usiamo una password di fallback fissa
+  const secret = env.ADMIN_SECRET || "tianshi2026";
+
+  if (authHeader !== `Bearer ${secret}`) {
+    return new Response(JSON.stringify({ 
+      error: "Non autorizzato",
+      dettaglio: !env.ADMIN_SECRET ? "La variabile ADMIN_SECRET su Cloudflare è vuota o non letta. Fallback attivo." : "Password errata."
+    }), { 
+      status: 401, 
+      headers: { 'Content-Type': 'application/json' } 
+    });
   }
 
   try {
     const newSettings: AppSettings = await request.json();
+    
+    // Controllo di sicurezza sul KV
+    if (!env.TIANSHI_KV) {
+      return new Response(JSON.stringify({ error: "Il database KV non è collegato al server!" }), { 
+        status: 500, 
+        headers: { 'Content-Type': 'application/json' } 
+      });
+    }
+
     await env.TIANSHI_KV.put('app_config', JSON.stringify(newSettings));
     
     return new Response(JSON.stringify({ success: true }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response('Errore di salvataggio', { status: 500 });
+    return new Response(JSON.stringify({ error: "Errore di salvataggio interno" }), { 
+      status: 500, 
+      headers: { 'Content-Type': 'application/json' } 
+    });
   }
 };

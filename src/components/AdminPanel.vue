@@ -2,16 +2,15 @@
   <div class="admin-container">
     <h2>Terminale di Controllo (Admin)</h2>
     
-    <div v-if="!isAuthenticated" class="auth-box">
+    <form v-if="!isAuthenticated" class="auth-box" @submit.prevent="loadSettings">
       <input 
         type="password" 
         v-model="secretKey" 
         placeholder="Inserisci Chiave di Accesso" 
-        @keyup.enter="loadSettings"
       />
-      <button @click="loadSettings">Accedi</button>
+      <button type="submit">Accedi</button>
       <p v-if="error" class="error">{{ error }}</p>
-    </div>
+    </form>
 
     <div v-else class="settings-box">
       <div class="setting-group toggle-group">
@@ -50,6 +49,7 @@
         {{ isSaving ? 'Salvataggio...' : 'Salva Configurazione' }}
       </button>
       <p v-if="successMsg" class="success">{{ successMsg }}</p>
+      <p v-if="error" class="error">{{ error }}</p>
     </div>
   </div>
 </template>
@@ -81,14 +81,13 @@ const loadSettings = async () => {
     if (res.ok) {
       const data = await res.json()
       settings.previewLimitActive = data.previewLimitActive
-      // Uniamo i dati per evitare errori se nel KV ci sono chiavi mancanti
       settings.storeLinks = { ...settings.storeLinks, ...data.storeLinks }
       isAuthenticated.value = true
     } else {
-      error.value = 'Impossibile caricare le impostazioni'
+      error.value = 'Impossibile caricare le impostazioni dal server.'
     }
   } catch (err) {
-    error.value = 'Errore di connessione'
+    error.value = 'Errore di connessione al database KV.'
   }
 }
 
@@ -109,14 +108,19 @@ const saveSettings = async () => {
 
     if (res.ok) {
       successMsg.value = 'Configurazione salvata con successo e live!'
-    } else if (res.status === 401) {
-      error.value = 'Password Admin non valida!'
-      isAuthenticated.value = false
     } else {
-      error.value = 'Errore durante il salvataggio'
+      // Catturiamo l'errore dettagliato dal nostro backend
+      const errData = await res.json().catch(() => ({}))
+      
+      if (res.status === 401) {
+        error.value = errData.dettaglio || 'Password Admin non valida!'
+        isAuthenticated.value = false
+      } else {
+        error.value = errData.error || 'Errore critico durante il salvataggio'
+      }
     }
   } catch (err) {
-    error.value = 'Errore di rete'
+    error.value = 'Errore di rete fatale.'
   } finally {
     isSaving.value = false
   }
@@ -159,7 +163,7 @@ input[type="text"], input[type="password"] {
   border-radius: 4px;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus, input[type="password"]:focus {
   border-color: var(--accent-gold);
   outline: none;
 }
@@ -195,6 +199,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.error { color: #ff4444; margin-top: 1rem; text-align: center; }
-.success { color: var(--accent-jade); margin-top: 1rem; text-align: center; }
+.error { color: #ff4444; margin-top: 1rem; text-align: center; font-weight: bold; }
+.success { color: var(--accent-jade); margin-top: 1rem; text-align: center; font-weight: bold; }
 </style>
