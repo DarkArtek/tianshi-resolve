@@ -24,7 +24,7 @@
             @timeupdate="handleTimeUpdate"
             @play="handlePlay"
           >
-            <source src="https://tianshi-resolve.b-cdn.net/tianshis-resolve.mp3" type="audio/mpeg">
+            <source src="https://tianshi-resolve.b-cdn.net/tianshi_resolve.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
           </audio>
           
