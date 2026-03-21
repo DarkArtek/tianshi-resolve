@@ -90,6 +90,8 @@
 import { ref, onMounted } from 'vue'
 import MagicDust from './MagicDust.vue'
 import { currentLang, t } from '../locales'
+// Abbiamo importato la funzione direttamente dal nostro core GTM
+import { pushToDataLayer } from '@ahdcreative/gtm-core'
 
 const audioRef = ref<HTMLAudioElement | null>(null)
 const previewEnded = ref(false)
@@ -124,12 +126,6 @@ onMounted(async () => {
   }
 })
 
-const pushToDataLayer = (payload: any) => {
-  if (typeof window !== 'undefined' && (window as any).dataLayer) {
-    (window as any).dataLayer.push(payload)
-  }
-}
-
 const handleStoreClick = (platformName: string, url: string) => {
   if (!url) return;
   
@@ -147,12 +143,11 @@ const handlePlay = () => {
   }
   
   if (!hasTrackedPlay.value) {
+    // Ora i parametri sono "piatti", esattamente come li aspetta GTM!
     pushToDataLayer({
       event: 'audio_interaction',
-      audio: {
-        action: 'play',
-        title: 'The Tianshi\'s Resolve'
-      }
+      audio_action: 'play',
+      audio_title: 'The Tianshi\'s Resolve'
     })
     hasTrackedPlay.value = true
   }
@@ -167,12 +162,11 @@ const handleTimeUpdate = () => {
     }
     
     if (!hasTrackedPreviewEnd.value) {
+      // Usiamo 'limit_reached' come discusso, piatto per farsi leggere da GTM
       pushToDataLayer({
         event: 'audio_interaction',
-        audio: {
-          action: 'reached_30s',
-          title: 'The Tianshi\'s Resolve'
-        }
+        audio_action: 'limit_reached',
+        audio_title: 'The Tianshi\'s Resolve'
       })
       hasTrackedPreviewEnd.value = true
     }
