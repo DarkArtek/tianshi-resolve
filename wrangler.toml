@@ -5,3 +5,8 @@ pages_build_output_dir = "dist"
 [[kv_namespaces]]
 binding = "TIANSHI_KV"
 id = "b38f3662e9ca492284cab87677714b60"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tianshi-presaves"
+database_id = "7955e317-0168-4a27-ae0f-2fa2cacefdd4"
