@@ -1,12 +1,12 @@
 <template>
   <div class="admin-container">
     <h2>Terminale di Controllo (Admin)</h2>
-    
+
     <form v-if="!isAuthenticated" class="auth-box" @submit.prevent="loadSettings">
-      <input 
-        type="password" 
-        v-model="secretKey" 
-        placeholder="Inserisci Chiave di Accesso" 
+      <input
+          type="password"
+          v-model="secretKey"
+          placeholder="Inserisci Chiave di Accesso"
       />
       <button type="submit">Accedi</button>
       <p v-if="error" class="error">{{ error }}</p>
@@ -74,13 +74,31 @@ const settings = reactive({
   }
 })
 
+interface AppSettingsData {
+  previewLimitActive?: boolean;
+  storeLinks?: {
+    spotify?: string;
+    appleMusic?: string;
+    amazonMusic?: string;
+    youtube?: string;
+    deezer?: string;
+  };
+}
+
+interface ErrorData {
+  error?: string;
+  dettaglio?: string;
+}
+
 const loadSettings = async () => {
   error.value = ''
   try {
     const res = await fetch('/api/settings')
     if (res.ok) {
-      const data = await res.json()
-      settings.previewLimitActive = data.previewLimitActive
+      const data = (await res.json()) as AppSettingsData
+      if (data.previewLimitActive !== undefined) {
+        settings.previewLimitActive = data.previewLimitActive
+      }
       settings.storeLinks = { ...settings.storeLinks, ...data.storeLinks }
       isAuthenticated.value = true
     } else {
@@ -95,7 +113,7 @@ const saveSettings = async () => {
   isSaving.value = true
   successMsg.value = ''
   error.value = ''
-  
+
   try {
     const res = await fetch('/api/settings', {
       method: 'POST',
@@ -109,9 +127,8 @@ const saveSettings = async () => {
     if (res.ok) {
       successMsg.value = 'Configurazione salvata con successo e live!'
     } else {
-      // Catturiamo l'errore dettagliato dal nostro backend
-      const errData = await res.json().catch(() => ({}))
-      
+      const errData = (await res.json().catch(() => ({}))) as ErrorData
+
       if (res.status === 401) {
         error.value = errData.dettaglio || 'Password Admin non valida!'
         isAuthenticated.value = false

@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { currentLang, t } from '../locales'
+import { currentLang, t } from '@/locales'
 </script>
 
 <style scoped>

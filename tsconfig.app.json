@@ -6,6 +6,10 @@
       "vite/client",
       "@cloudflare/workers-types"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
 
     /* Linting */
     "strict": true,

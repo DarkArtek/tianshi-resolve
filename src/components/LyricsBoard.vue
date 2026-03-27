@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { currentLang, t } from '../locales'
+import { currentLang, t } from '@/locales'
 </script>
 
 <style scoped>
@@ -63,7 +63,6 @@ h2 {
   text-shadow: 0 0 10px var(--accent-gold-glow);
 }
 
-/* Ottimizzazione Mobile */
 @media (max-width: 900px) {
   h2 {
     font-size: 1.5rem;

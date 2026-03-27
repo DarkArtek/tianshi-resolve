@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { currentLang, toggleLanguage } from '../locales'
+import { currentLang, toggleLanguage } from '@/locales'
 </script>
 
 <style scoped>
